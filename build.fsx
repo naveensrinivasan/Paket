@@ -393,6 +393,7 @@ Target "ReleaseGitHub" (fun _ ->
        | :? System.AggregateException as aggregateException ->
             for innerException in aggregateException.InnerExceptions do
                 printfn  "%O" innerException
+                printfn "%O" innerException.InnerException
                                             
 )
 
