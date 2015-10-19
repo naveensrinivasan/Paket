@@ -391,9 +391,7 @@ Target "ReleaseGitHub" (fun _ ->
         |> Async.RunSynchronously
     with
        | :? System.AggregateException as aggregateException ->
-            for innerException in aggregateException.InnerExceptions do
-                printfn  "%O" innerException
-                printfn "%O" innerException.InnerException
+            System.Diagnostics.Debugger.Break()
                                             
 )
 
