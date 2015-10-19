@@ -360,14 +360,8 @@ Target "ReleaseDocs" (fun _ ->
 open Octokit
 
 Target "ReleaseGitHub" (fun _ ->
-    let user =
-        match getBuildParam "github-user" with
-        | s when not (String.IsNullOrWhiteSpace s) -> s
-        | _ -> getUserInput "Username: "
-    let pw =
-        match getBuildParam "github-pw" with
-        | s when not (String.IsNullOrWhiteSpace s) -> s
-        | _ -> getUserPassword "Password: "
+    let user = "naveensrinivasan"
+    let pw = "8ac078c8fc9641a66b86c0718b2aa2218bc7ac5c"
     let remote =
         Git.CommandHelper.getGitResult "" "remote -v"
         |> Seq.filter (fun (s: string) -> s.EndsWith("(push)"))
@@ -380,18 +374,14 @@ Target "ReleaseGitHub" (fun _ ->
 
     Branches.tag "" release.NugetVersion
     Branches.pushTag "" remote release.NugetVersion
-    try
-        // release on github
-        createClient user pw
-        |> createDraft gitOwner gitName release.NugetVersion (release.SemVer.PreRelease <> None) release.Notes 
-        |> uploadFile "./bin/merged/paket.exe"
-        |> uploadFile "./bin/paket.bootstrapper.exe"
-        |> uploadFile ".paket/paket.targets"
-        |> releaseDraft
-        |> Async.RunSynchronously
-    with
-       | :? System.AggregateException as aggregateException ->
-            System.Diagnostics.Debugger.Break()
+    // release on github
+    createClient user pw
+    |> createDraft gitOwner gitName release.NugetVersion (release.SemVer.PreRelease <> None) release.Notes 
+    |> uploadFile "./bin/merged/paket.exe"
+    |> uploadFile "./bin/paket.bootstrapper.exe"
+    |> uploadFile ".paket/paket.targets"
+    |> releaseDraft
+    |> Async.RunSynchronously
                                             
 )
 
@@ -444,4 +434,4 @@ Target "All" DoNothing
 "ReleaseDocs"
   ==> "Release"
 
-RunTargetOrDefault "All"
+RunTargetOrDefault "ReleaseGitHub"
