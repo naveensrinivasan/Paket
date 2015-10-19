@@ -49,7 +49,7 @@ let testAssemblies = "tests/**/bin/Release/*Tests*.dll"
 
 // Git configuration (used for publishing documentation in gh-pages branch)
 // The profile where the project is posted
-let gitOwner = "fsprojects"
+let gitOwner = "nsrinivasan"
 let gitHome = "https://github.com/" + gitOwner
 
 // The name of the project on GitHub
@@ -431,8 +431,7 @@ Target "All" DoNothing
   ==> "PublishChocolatey"
   ==> "PublishNuGet"
 
-"PublishNuGet"    
-  ==> "ReleaseGitHub"
+"ReleaseGitHub"
   ==> "Release"
 
 "ReleaseGitHub"
