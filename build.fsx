@@ -380,15 +380,20 @@ Target "ReleaseGitHub" (fun _ ->
 
     Branches.tag "" release.NugetVersion
     Branches.pushTag "" remote release.NugetVersion
-    
-    // release on github
-    createClient user pw
-    |> createDraft gitOwner gitName release.NugetVersion (release.SemVer.PreRelease <> None) release.Notes 
-    |> uploadFile "./bin/merged/paket.exe"
-    |> uploadFile "./bin/paket.bootstrapper.exe"
-    |> uploadFile ".paket/paket.targets"
-    |> releaseDraft
-    |> Async.RunSynchronously
+    try
+        // release on github
+        createClient user pw
+        |> createDraft gitOwner gitName release.NugetVersion (release.SemVer.PreRelease <> None) release.Notes 
+        |> uploadFile "./bin/merged/paket.exe"
+        |> uploadFile "./bin/paket.bootstrapper.exe"
+        |> uploadFile ".paket/paket.targets"
+        |> releaseDraft
+        |> Async.RunSynchronously
+    with
+       | :? System.AggregateException as aggregateException ->
+            for innerException in aggregateException.InnerExceptions do
+                printfn  "%O" innerException
+                                            
 )
 
 Target "Release" DoNothing
