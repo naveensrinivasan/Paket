@@ -361,7 +361,7 @@ open Octokit
 
 Target "ReleaseGitHub" (fun _ ->
     let user = "naveensrinivasan"
-    let pw = "8ac078c8fc9641a66b86c0718b2aa2218bc7ac5c"
+    let pw = ""
     let remote =
         Git.CommandHelper.getGitResult "" "remote -v"
         |> Seq.filter (fun (s: string) -> s.EndsWith("(push)"))
