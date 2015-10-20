@@ -358,10 +358,15 @@ Target "ReleaseDocs" (fun _ ->
 
 #load "./paket-files/build/fsharp/FAKE/modules/Octokit/Octokit.fsx"
 open Octokit
-
 Target "ReleaseGitHub" (fun _ ->
-    let user = "naveensrinivasan"
-    let pw = ""
+    let user =
+        match getBuildParam "github-user" with
+        | s when not (String.IsNullOrWhiteSpace s) -> s
+        | _ -> getUserInput "Username: "
+    let pw =
+        match getBuildParam "github-pw" with
+        | s when not (String.IsNullOrWhiteSpace s) -> s
+        | _ -> getUserPassword "Password: "
     let remote =
         Git.CommandHelper.getGitResult "" "remote -v"
         |> Seq.filter (fun (s: string) -> s.EndsWith("(push)"))
@@ -374,6 +379,7 @@ Target "ReleaseGitHub" (fun _ ->
 
     Branches.tag "" release.NugetVersion
     Branches.pushTag "" remote release.NugetVersion
+    
     // release on github
     createClient user pw
     |> createDraft gitOwner gitName release.NugetVersion (release.SemVer.PreRelease <> None) release.Notes 
@@ -382,7 +388,6 @@ Target "ReleaseGitHub" (fun _ ->
     |> uploadFile ".paket/paket.targets"
     |> releaseDraft
     |> Async.RunSynchronously
-                                            
 )
 
 Target "Release" DoNothing
