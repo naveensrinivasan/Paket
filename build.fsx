@@ -425,8 +425,6 @@ Target "All" DoNothing
   ==> "PublishChocolatey"
   ==> "PublishNuGet"
 
-"ReleaseGitHub"
-  ==> "Release"
 
 "ReleaseGitHub"
   ?=> "ReleaseDocs"
@@ -434,4 +432,6 @@ Target "All" DoNothing
 "ReleaseDocs"
   ==> "Release"
 
+"ReleaseGitHub"
+  ==> "Release"
 RunTargetOrDefault "ReleaseGitHub"
